@@ -78,18 +78,18 @@ def parse_arguments():
 
     # Ensure mutations file is readable
     if not os.access(args.mutations, os.R_OK):
-        log.new().error(f"[!] Cannot access mutations file: {args.mutations}")
+        log.new().error(f"Cannot access mutations file: {args.mutations}")
         sys.exit()
 
     # Ensure brute file is readable
     if not os.access(args.brute, os.R_OK):
-        log.new().error("[!] Cannot access brute-force file, exiting")
+        log.new().error("Cannot access brute-force file, exiting")
         sys.exit()
 
     # Ensure keywords file is readable
     if args.keyfile:
         if not os.access(args.keyfile, os.R_OK):
-            log.new().error("[!] Cannot access keyword file, exiting")
+            log.new().error("Cannot access keyword file, exiting")
             sys.exit()
 
         # Parse keywords from input file
@@ -121,7 +121,7 @@ def check_windows():
             import colorama
             colorama.init()
         except ModuleNotFoundError:
-            log.new().debug("[!] Yo, Windows user - if you want pretty colors, you can"
+            log.new().debug("Yo, Windows user - if you want pretty colors, you can"
                             " install the colorama python package.")
 
 
