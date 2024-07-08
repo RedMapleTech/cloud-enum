@@ -1,6 +1,6 @@
 # cloud_enum
 
-This for changes the following:
+This fork changes the following:
 
 - Adds JSON structured logging (with log level flag), findings are logged at INFO. Findings logs have fields:
   - `platform` - `gcp`/`azure`/`aws`
@@ -9,6 +9,7 @@ This for changes the following:
   - `target` - URL of asset e.g. `http://storage.googleapis.com/examplestorage`
   - `message` - Human readable summary of finding
 - Adds `ns.txt` which will be used by default instead of the `-ns` flag.
+- Adds `-r` flag to specify a region (should be combined with the `--disable-X` flags)
 - Removes logfile capability (to easily support the above requirement). Can pipe to file if required
   - Logfile format has additionally been removed
 - Build into a single executable. This will leave a `cloud_enum` bin in the `/dist` directory.
