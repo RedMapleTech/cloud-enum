@@ -1,0 +1,9 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  build:
+    cmds:
+      - docker build -t cloud-enum-build .
+      - docker run -it --rm -v ${PWD}:/usr/src/cloud-enum cloud-enum-build
