@@ -18,6 +18,8 @@ from enum_tools import azure_checks as azure
 from enum_tools import gcp_checks as gcp
 from logger import logger
 
+log = None
+
 
 def parse_arguments():
     """
@@ -28,6 +30,10 @@ def parse_arguments():
 
     # Grab the current dir of the script, for setting some defaults below
     script_path = os.path.split(os.path.abspath(sys.argv[0]))[0]
+
+    # If we're running as a frozen binary, we need to adjust the path
+    if getattr(sys, 'frozen', False):
+        script_path = sys._MEIPASS
 
     kw_group = parser.add_mutually_exclusive_group(required=True)
 
@@ -40,7 +46,7 @@ def parse_arguments():
                           help='Input file with a single keyword per line.')
 
     parser.add_argument('-l', '--log-level', type=str,
-                        action='store', default='info', help='Log level')
+                        action='store', default='INFO', help='Log level')
 
     # Use included mutations file by default, or let the user provide one
     parser.add_argument('-m', '--mutations', type=str, action='store', default=script_path +
@@ -54,9 +60,9 @@ def parse_arguments():
                         default=5, help='Threads for HTTP brute-force. Default = 5')
 
     parser.add_argument('-ns', '--nameserver', type=str, action='store',
-                        default='8.8.8.8', help='DNS server to use in brute-force.')
+                        help='DNS server to use in brute-force.')
 
-    parser.add_argument('-nsf', '--nameserverfile', type=str,
+    parser.add_argument('-nsf', '--nameserverfile', type=str, action='store', default=script_path + '/enum_tools/ns.txt',
                         help='Path to the file containing nameserver IPs')
 
     parser.add_argument('--disable-aws', action='store_true',
@@ -75,6 +81,10 @@ def parse_arguments():
                         action='store', help='Region to use for checks')
 
     args = parser.parse_args()
+
+    # Set up logging
+    global log
+    log = logger.Logger(args.log_level.upper())
 
     # Ensure mutations file is readable
     if not os.access(args.mutations, os.R_OK):
@@ -207,10 +217,6 @@ def main():
     Main program function.
     """
     args = parse_arguments()
-
-    # Set up logging
-    global log
-    log = logger.Logger(args.log_level.upper())
 
     # Generate a basic status on targets and parameters
     print_status(args)

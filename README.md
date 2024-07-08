@@ -1,5 +1,19 @@
 # cloud_enum
 
+This for changes the following:
+
+- Adds JSON structured logging (with log level flag), findings are logged at INFO. Findings logs have fields:
+  - `platform` - `gcp`/`azure`/`aws`
+  - `access` - `protected`/`public`/`disabled`
+  - `key` - identify type of finding
+  - `target` - URL of asset e.g. `http://storage.googleapis.com/examplestorage`
+  - `message` - Human readable summary of finding
+- Adds `ns.txt` which will be used by default instead of the `-ns` flag.
+- Removes logfile capability (to easily support the above requirement). Can pipe to file if required
+  - Logfile format has additionally been removed
+- Build into a single executable. This will leave a `cloud_enum` bin in the `/dist` directory.
+  - Build bin for deploy (linux/amd64): `task build`
+
 Multi-cloud OSINT tool. Enumerate public resources in AWS, Azure, and Google Cloud.
 
 Currently enumerates the following:
@@ -83,7 +97,7 @@ optional arguments:
   -ns NAMESERVER, --nameserver NAMESERVER
                         DNS server to use in brute-force.
   -l LOGFILE, --logfile LOGFILE
-                        REMOVED Will APPEND found items to specified file.
+                        [REMOVED] Will APPEND found items to specified file.
   -f FORMAT, --format FORMAT
                         Format for log file (text,json,csv - defaults to text)
   --disable-aws         Disable Amazon checks.
