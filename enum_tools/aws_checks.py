@@ -57,19 +57,19 @@ class AWSChecks:
             data['key'] = 'bucket_open'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info('OPEN S3 BUCKET')
+            self.log.info().extra(map=data).msg('OPEN S3 BUCKET')
             utils.list_bucket_contents(self.log, reply.url)
         elif reply.status_code == 403:
             data['key'] = 'bucket_protected'
             data['target'] = reply.url
             data['access'] = 'protected'
-            self.log.new().extra(map=data).info('Protected S3 Bucket')
+            self.log.info().extra(map=data).msg('Protected S3 Bucket')
         elif 'Slow Down' in reply.reason:
-            self.log.new().warning("Rate limited by AWS")
+            self.log.warn().msg("Rate limited by AWS")
             return 'breakout'
         else:
-            self.log.new().extra("status_code", reply.status_code).extra(
-                "reason", reply.reason).warning(f"Unknown status code from: {reply.url}")
+            self.log.warn().extra("status_code", reply.status_code).extra(
+                "reason", reply.reason).msg(f"Unknown status code from: {reply.url}")
 
         return None
 
@@ -77,7 +77,7 @@ class AWSChecks:
         """
         Checks for open and restricted Amazon S3 buckets
         """
-        self.log.new().trace("Checking for S3 buckets")
+        self.log.trace().msg("Checking for S3 buckets")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -95,7 +95,7 @@ class AWSChecks:
                             threads=self.args.threads)
 
         # Stop the time
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for S3 buckets took {utils.stop_timer(start_time)}")
 
     def check_awsapps(self):
@@ -105,7 +105,7 @@ class AWSChecks:
         """
         data = {'platform': 'aws', 'target': '', 'access': '', 'key': ''}
 
-        self.log.new().trace("Checking for AWS Apps")
+        self.log.trace().msg("Checking for AWS Apps")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -128,10 +128,10 @@ class AWSChecks:
             data['key'] = 'aws_app'
             data['target'] = f'https://{name}'
             data['access'] = 'protected'
-            self.log.new().extra(map=data).info('AWS App Found')
+            self.log.info().extra(map=data).msg('AWS App Found')
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for AWS Apps took {utils.stop_timer(start_time)}")
 
     def run_all(self):

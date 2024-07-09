@@ -2,24 +2,20 @@
 JSON logger
 """
 
-import datetime
-from distutils.log import Log
+from datetime import datetime
 import json
 
 TRACE = 0
 DEBUG = 1
 INFO = 2
-WARNING = 3
+WARN = 3
 ERROR = 4
 
 
 class Logger:
     def __init__(self, level):
-        self._level = self.__level_int(level)
+        self._min_level = self.__level_int(level)
         self._extra_data = {}
-
-    def new(self):
-        return Logger(self.__level_str(self._level))
 
     def extra(self, key=None, value=None, map=None):
         if map:
@@ -28,30 +24,40 @@ class Logger:
             self._extra_data[key] = value
         return self
 
-    def trace(self, msg):
-        self.__log(TRACE, msg)
+    def trace(self):
+        new = Logger(self.__level_str(self._min_level))
+        new._level = TRACE
+        return new
 
-    def debug(self, msg):
-        self.__log(DEBUG, msg)
+    def debug(self):
+        new = Logger(self.__level_str(self._min_level))
+        new._level = DEBUG
+        return new
 
-    def info(self, msg):
-        self.__log(INFO, msg)
+    def info(self):
+        new = Logger(self.__level_str(self._min_level))
+        new._level = INFO
+        return new
 
-    def warning(self, msg):
-        self.__log(WARNING, msg)
+    def warn(self):
+        new = Logger(self.__level_str(self._min_level))
+        new._level = WARN
+        return new
 
-    def error(self, msg):
-        self.__log(ERROR, msg)
+    def error(self):
+        new = Logger(self.__level_str(self._min_level))
+        new._level = ERROR
+        return new
 
-    def __log(self, level, msg):
-        if self._level > level:
+    def msg(self, msg):
+        if self._min_level > self._level:
             return
         entry = {
-            'time': datetime.datetime.now().isoformat(),
-            'level': self.__level_str(level),
-            'message': msg
+            'time': datetime.now().isoformat(),
+            'level': self.__level_str(self._level),
         }
         entry.update(self._extra_data)
+        entry['message'] = msg
         print(json.dumps(entry))
 
     def __level_str(self, level):
@@ -61,7 +67,7 @@ class Logger:
             return "DEBUG"
         if level == INFO:
             return "INFO"
-        if level == WARNING:
+        if level == WARN:
             return "WARNING"
         if level == ERROR:
             return "ERROR"
@@ -75,7 +81,13 @@ class Logger:
         if level == "INFO":
             return INFO
         if level == "WARNING":
-            return WARNING
+            return WARN
         if level == "ERROR":
             return ERROR
         return INFO
+
+
+log = Logger("TRACE")
+
+log.warn().extra("hello", "world").msg("Hello, world!")
+log.trace().msg("This is a trace message")

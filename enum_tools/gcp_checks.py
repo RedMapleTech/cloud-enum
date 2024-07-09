@@ -40,22 +40,22 @@ class GCPChecks:
             data['key'] = 'bucket_open'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info("Open Google Bucket")
+            self.log.info().extra(map=data).msg("Open Google Bucket")
             utils.list_bucket_contents(self.log, reply.url + '/')
         elif reply.status_code == 403:
             data['key'] = 'bucket_protected'
             data['target'] = reply.url
             data['access'] = 'protected'
-            self.log.new().extra(map=data).info("Protected Google Bucket")
+            self.log.info().extra(map=data).msg("Protected Google Bucket")
         else:
-            self.log.new().extra("status_code", reply.status_code).extra("reason", reply.reason).warning(
+            self.log.warn().extra("status_code", reply.status_code).extra("reason", reply.reason).msg(
                 f"Unknown status code from: {reply.url}")
 
     def check_gcp_buckets(self):
         """
         Checks for open and restricted Google Cloud buckets
         """
-        self.log.new().trace("Checking for Google buckets")
+        self.log.trace().msg("Checking for Google buckets")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -72,7 +72,7 @@ class GCPChecks:
                             callback=self.print_bucket_response, threads=self.args.threads)
 
         # Stop the time
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Google buckets took {utils.stop_timer(start_time)}")
 
     def print_fbrtdb_response(self, reply):
@@ -90,31 +90,32 @@ class GCPChecks:
             data['key'] = 'firebase_open'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info("Open Google Firebase RTDB")
+            self.log.info().extra(map=data).msg("Open Google Firebase RTDB")
         elif reply.status_code == 401:
             data['key'] = 'firebase_protected'
             data['target'] = reply.url
             data['access'] = 'protected'
-            self.log.new().extra(map=data).info("Protected Google Firebase RTDB")
+            self.log.info().extra(map=data).msg("Protected Google Firebase RTDB")
         elif reply.status_code == 402:
             data['key'] = 'firebase_payment_required'
             data['target'] = reply.url
             data['access'] = 'disabled'
-            self.log.new().extra(map=data).info("Payment required on Google Firebase RTDB")
+            self.log.info().extra(map=data).msg(
+                "Payment required on Google Firebase RTDB")
         elif reply.status_code == 423:
             data['key'] = 'firebase_disabled'
             data['target'] = reply.url
             data['access'] = 'disabled'
-            self.log.new().extra(map=data).info("Deactivated Google Firebase RTDB")
+            self.log.info().extra(map=data).msg("Deactivated Google Firebase RTDB")
         else:
-            self.log.new().extra("status_code", reply.status_code).extra("reason", reply.reason).warning(
+            self.log.warn().extra("status_code", reply.status_code).extra("reason", reply.reason).msg(
                 f"Unknown status code from: {reply.url}")
 
     def check_fbrtdb(self):
         """
         Checks for Google Firebase RTDB
         """
-        self.log.new().trace("Checking for Google Firebase Realtime Databases")
+        self.log.trace().msg("Checking for Google Firebase Realtime Databases")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -134,7 +135,7 @@ class GCPChecks:
                             threads=self.args.threads, redir=False)
 
         # Stop the time
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Google Firebase RTDB took {utils.stop_timer(start_time)}")
 
     def print_fbapp_response(self, reply):
@@ -152,16 +153,16 @@ class GCPChecks:
             data['key'] = 'firebase_open'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info("Open Google Firebase App")
+            self.log.info().extra(map=data).msg("Open Google Firebase App")
         else:
-            self.log.new().extra("status_code", reply.status_code).extra("reason", reply.reason).warning(
+            self.log.warn().extra("status_code", reply.status_code).extra("reason", reply.reason).msg(
                 f"Unknown status code from: {reply.url}")
 
     def check_fbapp(self):
         """
         Checks for Google Firebase Applications
         """
-        self.log.new().trace("Checking for Google Firebase Applications")
+        self.log.trace().msg("Checking for Google Firebase Applications")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -181,7 +182,7 @@ class GCPChecks:
                             threads=self.args.threads, redir=False)
 
         # Stop the time
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Google Firebase Applications took {utils.stop_timer(start_time)}")
 
     def print_appspot_response(self, reply):
@@ -199,27 +200,29 @@ class GCPChecks:
             data['key'] = 'app_engine_error'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info("Google App Engine app with a 50x error")
+            self.log.info().extra(map=data).msg(
+                "Google App Engine app with a 50x error")
         elif reply.status_code in (200, 302, 404):
             if 'accounts.google.com' in reply.url:
                 data['key'] = 'app_engine_protected'
                 data['target'] = reply.history[0].url
                 data['access'] = 'protected'
-                self.log.new().extra(map=data).info("Protected Google App Engine app")
+                self.log.info().extra(map=data).msg(
+                    "Protected Google App Engine app")
             else:
                 data['key'] = 'app_engine_open'
                 data['target'] = reply.url
                 data['access'] = 'public'
-                self.log.new().extra(map=data).info("Open Google App Engine app")
+                self.log.info().extra(map=data).msg("Open Google App Engine app")
         else:
-            self.log.new().extra("status_code", reply.status_code).extra("reason", reply.reason).warning(
+            self.log.warn().extra("status_code", reply.status_code).extra("reason", reply.reason).msg(
                 f"Unknown status code from: {reply.url}")
 
     def check_appspot(self):
         """
         Checks for Google App Engine sites running on appspot.com
         """
-        self.log.new().trace("Checking for Google App Engine apps")
+        self.log.trace().msg("Checking for Google App Engine apps")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -239,7 +242,7 @@ class GCPChecks:
                             callback=self.print_appspot_response, threads=self.args.threads)
 
         # Stop the time
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Google App Engine apps took {utils.stop_timer(start_time)}")
 
     def print_functions_response1(self, reply):
@@ -257,10 +260,10 @@ class GCPChecks:
             data['key'] = 'has_cloud_functions'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info("Contains at least 1 Cloud Function")
+            self.log.info().extra(map=data).msg("Contains at least 1 Cloud Function")
             HAS_FUNCS.append(reply.url)
         else:
-            self.log.new().extra("status_code", reply.status_code).extra("reason", reply.reason).warning(
+            self.log.warn().extra("status_code", reply.status_code).extra("reason", reply.reason).msg(
                 f"Unknown status code from: {reply.url}")
 
     def print_functions_response2(self, reply):
@@ -278,19 +281,21 @@ class GCPChecks:
             data['key'] = 'cloud_function_auth_required'
             data['target'] = reply.url
             data['access'] = 'protected'
-            self.log.new().extra(map=data).info("Auth required Cloud Function")
+            self.log.info().extra(map=data).msg("Auth required Cloud Function")
         elif reply.status_code == 405:
             data['key'] = 'cloud_function_post_only'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info("UNAUTHENTICATED Cloud Function (POST-Only)")
+            self.log.info().extra(map=data).msg(
+                "UNAUTHENTICATED Cloud Function (POST-Only)")
         elif reply.status_code in (200, 404):
             data['key'] = 'cloud_function_get_ok'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info("UNAUTHENTICATED Cloud Function (GET-OK)")
+            self.log.info().extra(map=data).msg(
+                "UNAUTHENTICATED Cloud Function (GET-OK)")
         else:
-            self.log.new().extra("status_code", reply.status_code).extra("reason", reply.reason).warning(
+            self.log.warn().extra("status_code", reply.status_code).extra("reason", reply.reason).msg(
                 f"Unknown status code from: {reply.url}")
 
     def check_functions(self):
@@ -308,7 +313,8 @@ class GCPChecks:
         See gcp_regions.py to define which regions to check. The tool currently
         defaults to only 1 region, so you should really modify it for best results.
         """
-        self.log.new().trace("Checking for project/zones with Google Cloud Functions.")
+        self.log.trace().msg(
+            "Checking for project/zones with Google Cloud Functions.")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -323,7 +329,7 @@ class GCPChecks:
         if self.args.region:
             regions = [self.args.region]
 
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Testing across {len(regions)} regions defined in the config file or command line")
 
         # Take each mutated keyword craft a url with the correct format
@@ -346,7 +352,7 @@ class GCPChecks:
 
         # If we did find something, we'll use the brute list. This will allow people
         # to provide a separate fuzzing list if they choose.
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Brute-forcing function names in {len(HAS_FUNCS)} project/region combos")
 
         # Load brute list in memory, based on allowed chars/etc
@@ -355,7 +361,7 @@ class GCPChecks:
         # The global was built in a previous function. We only want to brute force
         # project/region combos that we know have existing functions defined
         for func in HAS_FUNCS:
-            self.log.new().trace(
+            self.log.trace().msg(
                 f"Brute-forcing {len(brute_strings)} function names in {func}")
             # Initialize the list of initial URLs to check. Strip out the HTTP
             # protocol first, as that is handled in the utility
@@ -371,7 +377,7 @@ class GCPChecks:
                                 candidates, use_ssl=False, callback=self.print_functions_response2, threads=self.args.threads)
 
         # Stop the time
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for project/zones with Google Cloud Functions took {utils.stop_timer(start_time)}")
 
     def run_all(self):

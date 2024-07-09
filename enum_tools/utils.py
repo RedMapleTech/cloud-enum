@@ -84,9 +84,9 @@ def get_url_batch(log: logger.Logger, url_list, use_ssl=False, callback='', thre
                 # hanging forever with no exception raised.
                 batch_results[url] = batch_pending[url].result(timeout=30)
             except requests.exceptions.ConnectionError as error_msg:
-                log.new().warning(f"Connection error on {url}: {error_msg}")
+                log.warn().msg(f"Connection error on {url}: {error_msg}")
             except TimeoutError:
-                log.new().warning(
+                log.warn().msg(
                     f"Timeout on {url}. Investigate if there are many of these")
 
         # Now, send all the results to the callback function for analysis
@@ -113,10 +113,10 @@ def read_nameservers(log: logger.Logger, file_path):
                 "Nameserver file is empty or only contains comments")
         return nameservers
     except FileNotFoundError:
-        log.new().error(f"Error: File '{file_path}' not found.")
+        log.error().msg(f"Error: File '{file_path}' not found.")
         exit(1)
     except ValueError as e:
-        log.new().error(e)
+        log.error().msg(e)
         exit(1)
 
 
@@ -152,10 +152,10 @@ def dns_lookup(log: logger.Logger, nameserver, name):
     except dns.resolver.NXDOMAIN:
         return ''
     except dns.resolver.NoNameservers as exc_text:
-        log.new().error(f"Error querying nameservers: {exc_text}")
+        log.error().msg(f"Error querying nameservers: {exc_text}")
         return '-#BREAKOUT_DNS_ERROR#-'
     except dns.exception.Timeout:
-        log.new().warning(
+        log.warn().msg(
             f"DNS Timeout on {name}. Investigate if there are many of these")
         return ''
 
@@ -166,7 +166,7 @@ def fast_dns_lookup(log: logger.Logger, names, nameserver, nameserverfile, callb
     """
     valid_names = []
 
-    log.new().trace(
+    log.trace().msg(
         f"Brute-forcing a list of {len(names)} possible DNS names")
 
     # Filter out invalid domains
@@ -219,9 +219,9 @@ def list_bucket_contents(log: logger.Logger, bucket):
     if keys:
         for key in keys:
             url = bucket + key
-            log.new().extra("bucket", bucket).debug(f"File: {url}")
+            log.debug().extra("bucket", bucket).msg(f"File: {url}")
     else:
-        log.new().extra("bucket", bucket).debug("Empty bucket")
+        log.debug().extra("bucket", bucket).msg("Empty bucket")
 
 
 def get_brute(brute_file, mini=1, maxi=63, banned='[^a-z0-9_-]'):

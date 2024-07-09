@@ -45,36 +45,36 @@ class AzureChecks:
             data['key'] = 'account_auth'
             data['target'] = reply.url
             data['access'] = 'protected'
-            self.log.new().extra(map=data).info("Azure Auth-Only Account")
+            self.log.info().extra(map=data).msg("Azure Auth-Only Account")
         elif 'The specified account is disabled' in reply.reason:
             data['key'] = 'account_disabled'
             data['target'] = reply.url
             data['access'] = 'disabled'
-            self.log.new().extra(map=data).info("Azure Disabled Account")
+            self.log.info().extra(map=data).msg("Azure Disabled Account")
         elif 'Value for one of the query' in reply.reason:
             data['key'] = 'account_http_ok'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info("Azure HTTP-OK Account")
+            self.log.info().extra(map=data).msg("Azure HTTP-OK Account")
         elif 'The account being accessed' in reply.reason:
             data['key'] = 'account_https_only'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info("Azure HTTPS-Only Account")
+            self.log.info().extra(map=data).msg("Azure HTTPS-Only Account")
         elif 'Unauthorized' in reply.reason:
             data['key'] = 'account_unauthorized'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).debug("Azure Unauthorized Account")
+            self.log.debug().extra(map=data).msg("Azure Unauthorized Account")
         else:
-            self.log.new().extra("status_code", reply.status_code).extra("reason", reply.reason).warning(
+            self.log.warn().extra("status_code", reply.status_code).extra("reason", reply.reason).msg(
                 f"Unknown status code from: {reply.url}")
 
     def check_storage_accounts(self):
         """
         Checks storage account names
         """
-        self.log.new().trace("Checking for Azure Storage Accounts")
+        self.log.trace().msg("Checking for Azure Storage Accounts")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -102,7 +102,7 @@ class AzureChecks:
                             callback=self.print_account_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Azure Storage Accounts took {utils.stop_timer(start_time)}")
 
         # de-dupe the results and return
@@ -112,7 +112,7 @@ class AzureChecks:
         """
         Checks File account names
         """
-        self.log.new().trace("Checking for Azure File Accounts")
+        self.log.trace().msg("Checking for Azure File Accounts")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -140,7 +140,7 @@ class AzureChecks:
                             callback=self.print_account_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Azure File Accounts took {utils.stop_timer(start_time)}")
 
         # de-dupe the results and return
@@ -150,7 +150,7 @@ class AzureChecks:
         """
         Checks Queue account names
         """
-        self.log.new().trace("Checking for Azure Queue Accounts")
+        self.log.trace().msg("Checking for Azure Queue Accounts")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -178,7 +178,7 @@ class AzureChecks:
                             callback=self.print_account_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Azure Queue Accounts took {utils.stop_timer(start_time)}")
 
         # de-dupe the results and return
@@ -188,7 +188,7 @@ class AzureChecks:
         """
         Checks Table account names
         """
-        self.log.new().trace("Checking for Azure Table Accounts")
+        self.log.trace().msg("Checking for Azure Table Accounts")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -216,7 +216,7 @@ class AzureChecks:
                             callback=self.print_account_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Azure Table Accounts took {utils.stop_timer(start_time)}")
 
         # de-dupe the results and return
@@ -226,7 +226,7 @@ class AzureChecks:
         """
         Checks App Management account names
         """
-        self.log.new().trace("Checking for Azure App Management Accounts")
+        self.log.trace().msg("Checking for Azure App Management Accounts")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -254,7 +254,7 @@ class AzureChecks:
                             callback=self.print_account_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Azure App Management Accounts took {utils.stop_timer(start_time)}")
 
         # de-dupe the results and return
@@ -264,7 +264,7 @@ class AzureChecks:
         """
         Checks Key Vault account names
         """
-        self.log.new().trace("Checking for Azure Key Vault Accounts")
+        self.log.trace().msg("Checking for Azure Key Vault Accounts")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -292,7 +292,7 @@ class AzureChecks:
                             callback=self.print_account_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Azure Key Vault Accounts took {utils.stop_timer(start_time)}")
 
         # de-dupe the results and return
@@ -309,7 +309,7 @@ class AzureChecks:
 
         # Stop brute forcing disabled accounts
         if 'The specified account is disabled' in reply.reason:
-            self.log.new().trace("Azure account disabled, breaking out early")
+            self.log.trace().msg("Azure account disabled, breaking out early")
             return 'breakout'
 
         # Stop brute forcing accounts without permission
@@ -317,12 +317,13 @@ class AzureChecks:
                 'not have sufficient permissions' in reply.reason or
                 'Public access is not permitted' in reply.reason or
                 'Server failed to authenticate the request' in reply.reason):
-            self.log.new().trace("Azure account requires auth, breaking out early")
+            self.log.trace().msg("Azure account requires auth, breaking out early")
             return 'breakout'
 
         # Stop brute forcing unsupported accounts
         if 'Blob API is not yet supported' in reply.reason:
-            self.log.new().trace("Azure account is Hierarchical namespace, breaking out early")
+            self.log.trace().msg(
+                "Azure account is Hierarchical namespace, breaking out early")
             return 'breakout'
 
         # Handle other responses
@@ -332,15 +333,15 @@ class AzureChecks:
             data['key'] = 'container_open'
             data['target'] = reply.url
             data['access'] = 'public'
-            self.log.new().extra(map=data).info('Open Azure Container')
+            self.log.info().extra(map=data).msg('Open Azure Container')
             utils.list_bucket_contents(self.log, reply.url)
         elif 'One of the request inputs is out of range' in reply.reason:
             pass
         elif 'The request URI is invalid' in reply.reason:
             pass
         else:
-            self.log.new().extra("status_code", reply.status_code).extra(
-                "reason", reply.reason).warning(f"Unknown status code from: {reply.url}")
+            self.log.warn().extra("status_code", reply.status_code).extra(
+                "reason", reply.reason).msg(f"Unknown status code from: {reply.url}")
 
         return None
 
@@ -355,7 +356,7 @@ class AzureChecks:
         # We have a list of valid DNS names that might not be worth scraping,
         # such as disabled accounts or authentication required. Let's quickly
         # weed those out.
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking {len(storage_accounts)} accounts for status before brute-forcing")
         valid_accounts = []
         for account in storage_accounts:
@@ -368,7 +369,7 @@ class AzureChecks:
                 else:
                     valid_accounts.append(account)
             except requests.exceptions.ConnectionError as error_msg:
-                self.log.new().warning(
+                self.log.warn().msg(
                     f"Connection error on https://{account}: {error_msg}")
 
         # Read the brute force file into memory
@@ -377,10 +378,10 @@ class AzureChecks:
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
 
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Brute-forcing container names in {len(valid_accounts)} storage accounts")
         for account in valid_accounts:
-            self.log.new().trace(
+            self.log.trace().msg(
                 f"Brute-forcing {len(clean_names)} container names in {account}")
 
             # Initialize the list of correctly formatted urls
@@ -396,7 +397,7 @@ class AzureChecks:
                                 candidates, use_ssl=True, callback=self.print_container_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Brute-forcing Azure Containers took {utils.stop_timer(start_time)}")
 
     def print_website_response(self, hostname):
@@ -409,13 +410,13 @@ class AzureChecks:
         data['key'] = 'registered_website_dns'
         data['target'] = hostname
         data['access'] = 'public'
-        self.log.new().extra(map=data).info('Registered Azure Website DNS Name')
+        self.log.info().extra(map=data).msg('Registered Azure Website DNS Name')
 
     def check_azure_websites(self):
         """
         Checks for Azure Websites (PaaS)
         """
-        self.log.new().trace("Checking for Azure Websites")
+        self.log.trace().msg("Checking for Azure Websites")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -428,7 +429,7 @@ class AzureChecks:
                               callback=self.print_website_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Azure Websites took {utils.stop_timer(start_time)}")
 
     def print_database_response(self, hostname):
@@ -441,13 +442,13 @@ class AzureChecks:
         data['key'] = 'registered_database_dns'
         data['target'] = hostname
         data['access'] = 'public'
-        self.log.new().extra(map=data).info('Registered Azure Database DNS Name')
+        self.log.info().extra(map=data).msg('Registered Azure Database DNS Name')
 
     def check_azure_databases(self):
         """
         Checks for Azure Databases
         """
-        self.log.new().trace("Checking for Azure Databases")
+        self.log.trace().msg("Checking for Azure Databases")
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
 
@@ -459,7 +460,7 @@ class AzureChecks:
                               callback=self.print_database_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Azure Databases took {utils.stop_timer(start_time)}")
 
     def print_vm_response(self, hostname):
@@ -472,13 +473,14 @@ class AzureChecks:
         data['key'] = 'registered_vm_dns'
         data['target'] = hostname
         data['access'] = 'public'
-        self.log.new().extra(map=data).info('Registered Azure Virtual Machine DNS Name')
+        self.log.info().extra(map=data).msg(
+            'Registered Azure Virtual Machine DNS Name')
 
     def check_azure_vms(self):
         """
         Checks for Azure Virtual Machines
         """
-        self.log.new().trace("Checking for Azure Virtual Machines")
+        self.log.trace().msg("Checking for Azure Virtual Machines")
 
         # Start a counter to report on elapsed time
         start_time = utils.start_timer()
@@ -490,7 +492,7 @@ class AzureChecks:
         if self.args.region:
             regions = [self.args.region]
 
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Testing across {len(regions)} regions defined in the config file or command line")
 
         for region in regions:
@@ -503,7 +505,7 @@ class AzureChecks:
                                   callback=self.print_vm_response, threads=self.args.threads)
 
         # Stop the timer
-        self.log.new().trace(
+        self.log.trace().msg(
             f"Checking for Azure Virtual Machines took {utils.stop_timer(start_time)}")
 
     def run_all(self):
