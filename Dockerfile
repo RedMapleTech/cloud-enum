@@ -1,5 +1,7 @@
 # Dockerfile for building to single executable file with pyinstaller
-FROM --platform=linux/amd64 python
+FROM --platform=linux/amd64 python:alpine
+
+RUN apk add binutils
 
 WORKDIR /usr/src/cloud-enum
 
