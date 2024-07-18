@@ -85,9 +85,3 @@ class Logger:
         if level == "ERROR":
             return ERROR
         return INFO
-
-
-log = Logger("TRACE")
-
-log.warn().extra("hello", "world").msg("Hello, world!")
-log.trace().msg("This is a trace message")
