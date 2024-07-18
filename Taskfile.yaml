@@ -7,3 +7,6 @@ tasks:
     cmds:
       - docker build -t cloud-enum-build .
       - docker run -it --rm -v ${PWD}:/usr/src/cloud-enum cloud-enum-build
+
+  build-local:
+    cmd: pyinstaller --onefile --add-data=enum_tools/fuzz.txt:enum_tools --add-data=enum_tools/ns.txt:enum_tools cloud_enum.py

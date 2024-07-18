@@ -515,7 +515,7 @@ class AzureChecks:
 
         valid_accounts = self.check_storage_accounts()
         if valid_accounts and not self.args.quickscan:
-            self.brute_force_containers(self, valid_accounts)
+            self.brute_force_containers(valid_accounts)
 
         self.check_file_accounts()
         self.check_queue_accounts()
