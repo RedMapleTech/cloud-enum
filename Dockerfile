@@ -1,5 +1,7 @@
 # Dockerfile for building to single executable file with pyinstaller
-FROM --platform=linux/amd64 python:alpine
+FROM python:alpine
+ARG TARGETARCH
+ENV TARGETARCH=$TARGETARCH
 
 RUN apk add binutils
 
@@ -9,4 +11,4 @@ COPY . .
 
 RUN pip3 install -r ./requirements.txt
 
-CMD ["pyinstaller", "--onefile", "--add-data=enum_tools/fuzz.txt:enum_tools", "--add-data=enum_tools/ns.txt:enum_tools", "cloud_enum.py"]
+CMD ["sh", "-c", "pyinstaller --onefile --add-data=enum_tools/fuzz.txt:enum_tools --add-data=enum_tools/ns.txt:enum_tools -n cloud-enum-${TARGETARCH} cloud_enum.py"]
